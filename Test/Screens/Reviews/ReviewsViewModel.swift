@@ -52,10 +52,22 @@ private extension ReviewsViewModel {
             state.items += reviews.items.map(makeReviewItem)
             state.offset += state.limit
             state.shouldLoad = state.offset < reviews.count
+            state.reviewsCount = reviews.count
+            updateReviewsCountItem()
         } catch {
             state.shouldLoad = true
         }
         onStateChange?(state)
+    }
+
+    /// Метод, обновляющий последнюю ячейку с количеством отзывов
+    func updateReviewsCountItem() {
+        let countItem = makeReviewsCountItem()
+        if state.items.last is ReviewsCountItem {
+            state.items[state.items.count - 1] = countItem
+        } else {
+            state.items.append(countItem)
+        }
     }
 
     /// Метод, вызываемый при нажатии на кнопку "Показать полностью...".
@@ -77,6 +89,7 @@ private extension ReviewsViewModel {
 private extension ReviewsViewModel {
 
     typealias ReviewItem = ReviewCellConfig
+    typealias ReviewsCountItem = ReviewsCountCellConfig
 
     func makeReviewItem(_ review: Review) -> ReviewItem {
         let userName = "\(review.first_name) \(review.last_name)".attributed(font: .username)
@@ -91,6 +104,13 @@ private extension ReviewsViewModel {
             created: created,
             onTapShowMore: showMoreReview
         )
+        return item
+    }
+
+    func makeReviewsCountItem() -> ReviewsCountItem {
+        let reviewsCount = state.reviewsCount
+        let reviewsCountText = String(reviewsCount).attributed(font: .reviewCount, color: .reviewCount)
+        let item = ReviewsCountItem(reviewsCount: reviewsCountText)
         return item
     }
 
