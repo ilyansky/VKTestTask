@@ -27,7 +27,7 @@ extension RatingRendererConfig {
             spacing: 1.0
         )
     }
-
+    
 }
 
 // MARK: - Renderer
@@ -64,7 +64,7 @@ extension RatingRenderer {
     }
 
     func ratingImage(_ rating: Int) -> UIImage {
-        images[rating] ?? drawRatingImageAndCache(rating)
+        return images[rating] ?? drawRatingImageAndCache(rating)
     }
 
 }
