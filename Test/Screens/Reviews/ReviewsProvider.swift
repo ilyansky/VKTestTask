@@ -24,7 +24,7 @@ extension ReviewsProvider {
 
     }
 
-    func getReviews(offset: Int = 0, completion: @escaping (GetReviewsResult) -> Void) {
+    func getReviews(completion: @escaping (GetReviewsResult) -> Void) {
         guard let url = bundle.url(forResource: "getReviews.response", withExtension: "json") else {
             return completion(.failure(.badURL))
         }

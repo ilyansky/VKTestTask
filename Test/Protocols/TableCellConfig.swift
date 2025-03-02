@@ -21,12 +21,16 @@ protocol TableCellConfig {
 
 extension TableCellConfig {
 
-    static var reuseId: String {
-        String(describing: Self.self)
-    }
-
     var reuseId: String {
         Self.reuseId
     }
 
+}
+
+// MARK: - Private
+
+private extension TableCellConfig {
+    private static var reuseId: String {
+        return String(describing: Self.self)
+    }
 }

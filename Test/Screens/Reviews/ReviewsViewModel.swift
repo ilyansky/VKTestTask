@@ -35,7 +35,7 @@ extension ReviewsViewModel {
     func getReviews() {
         guard state.shouldLoad else { return }
         state.shouldLoad = false
-        reviewsProvider.getReviews(offset: state.offset, completion: gotReviews)
+        reviewsProvider.getReviews(completion: gotReviews)
     }
 
 }
@@ -48,11 +48,17 @@ private extension ReviewsViewModel {
     func gotReviews(_ result: ReviewsProvider.GetReviewsResult) {
         do {
             let data = try result.get()
-            let reviews = try decoder.decode(Reviews.self, from: data)
-            state.items += reviews.items.map(makeReviewItem)
-            state.offset += state.limit
-            state.shouldLoad = state.offset < reviews.count
-            state.reviewsCount = reviews.count
+
+            let allReviews = try decoder.decode(Reviews.self, from: data)
+            state.reviewsCount = allReviews.count
+
+            // Имитация запросов пачками
+            let pagedReviews = Array(allReviews.items[state.offset..<min(state.offset + state.limit, state.reviewsCount)])
+
+            state.items += pagedReviews.map(makeReviewItem)
+            state.offset += pagedReviews.count
+            state.shouldLoad = state.offset < state.reviewsCount
+
             updateReviewsCountItem()
         } catch {
             state.shouldLoad = true
@@ -62,11 +68,9 @@ private extension ReviewsViewModel {
 
     /// Метод, обновляющий последнюю ячейку с количеством отзывов
     func updateReviewsCountItem() {
-        let countItem = makeReviewsCountItem()
-        if state.items.last is ReviewsCountItem {
-            state.items[state.items.count - 1] = countItem
-        } else {
-            state.items.append(countItem)
+        if state.items.count == state.reviewsCount {
+            let reviewsCountItem = makeReviewsCountItem()
+            state.items.append(reviewsCountItem)
         }
     }
 

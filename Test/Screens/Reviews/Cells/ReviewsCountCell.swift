@@ -71,7 +71,7 @@ private extension ReviewsCountCell {
 /// Класс, в котором происходит расчёт фрейма для сабвью ячейки количества отзывов.
 /// После расчётов возвращается актуальная высота ячейки.
 private final class ReviewsCountCellLayout {
-    private init() { }
+    private init() {}
 
     static let shared = ReviewsCountCellLayout()
 
