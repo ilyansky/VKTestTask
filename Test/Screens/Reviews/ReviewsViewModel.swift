@@ -36,14 +36,13 @@ extension ReviewsViewModel {
         guard state.shouldLoad else { return }
         state.shouldLoad = false
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global().async {
             self.reviewsProvider.getReviews { result in
                 DispatchQueue.main.async {
                     self.gotReviews(result)
                 }
             }
         }
-
     }
 
 }
@@ -121,9 +120,70 @@ private extension ReviewsViewModel {
 
     func makeReviewsCountItem() -> ReviewsCountItem {
         let reviewsCount = state.reviewsCount
-        let reviewsCountText = String(reviewsCount).attributed(font: .reviewCount, color: .reviewCount)
+        let reviewsCountString = handleReviewsCountNumber(reviewsCount)
+        let reviewsCountText = reviewsCountString.attributed(font: .reviewCount, color: .reviewCount)
         let item = ReviewsCountItem(reviewsCount: reviewsCountText)
         return item
+    }
+
+    func handleReviewsCountNumber(_ number: Int) -> String {
+        func countDigits() -> Int {
+            var count = 0
+            var num = number
+
+            if number == 0 { return 1 }
+
+            while num > 0 {
+                num /= 10
+                count += 1
+            }
+
+            return count
+        }
+
+        func handleLastDigit(_ digit: Int) -> String {
+            if [0, 5, 6, 7, 8, 9].contains(digit) {
+                return rpm
+            } else if [2, 3, 4].contains(digit)  {
+                return rpe
+            } else {
+                return ip
+            }
+        }
+
+        var result = ""
+        let digits = countDigits()
+
+        /// Именительный падеж
+        var ip: String {
+            "\(number) отзыв"
+        }
+
+        /// Родительный падеж - единственное число
+        var rpe: String {
+            "\(number) отзыва"
+        }
+
+        /// Родительный падеж - множественное число
+        var rpm: String {
+            "\(number) отзывов"
+        }
+
+        switch digits {
+        case 1:
+            result = handleLastDigit(number)
+        default:
+            let lastDigit = number % 10
+            let secondLastDigit = (number / 10) % 10
+
+            if secondLastDigit == 1 {
+                result = rpm
+            } else {
+                result = handleLastDigit(lastDigit)
+            }
+        }
+
+        return result
     }
 
 }

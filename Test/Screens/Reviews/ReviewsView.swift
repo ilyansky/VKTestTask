@@ -15,7 +15,7 @@ final class ReviewsView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        tableView.frame = bounds.inset(by: safeAreaInsets)
+        tableView.frame = bounds
     }
 
 }

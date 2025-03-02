@@ -88,8 +88,8 @@ private final class ReviewsCountCellLayout {
 
     func height(config: Config, maxWidth: CGFloat) -> CGFloat {
         let width = maxWidth - insets.left - insets.right
-        let height = 44.0
         let labelSize = config.reviewsCount.boundingRect(width: width).size
+        let height = labelSize.height
 
         let centerX = (maxWidth - labelSize.width) / 2
         let centerY = (height - labelSize.height) / 2
