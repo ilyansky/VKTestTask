@@ -35,7 +35,15 @@ extension ReviewsViewModel {
     func getReviews() {
         guard state.shouldLoad else { return }
         state.shouldLoad = false
-        reviewsProvider.getReviews(completion: gotReviews)
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.reviewsProvider.getReviews { result in
+                DispatchQueue.main.async {
+                    self.gotReviews(result)
+                }
+            }
+        }
+
     }
 
 }
