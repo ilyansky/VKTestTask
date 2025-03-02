@@ -23,8 +23,18 @@ final class ReviewsViewController: UIViewController {
         super.viewDidLoad()
         setupViewModel()
         viewModel.getReviews()
+        setupRefreshControl()
     }
 
+}
+
+// MARK: - Action
+
+private extension ReviewsViewController {
+    @objc func refresh(sender: UIRefreshControl) {
+        viewModel.getReviews()
+        sender.endRefreshing()
+    }
 }
 
 // MARK: - Private
@@ -41,7 +51,18 @@ private extension ReviewsViewController {
     func setupViewModel() {
         viewModel.onStateChange = { [weak reviewsView] _ in
             reviewsView?.tableView.reloadData()
+            if let spinnedIsActive = reviewsView?.reviewsSpinner.isAnimating {
+                if spinnedIsActive {
+                    reviewsView?.reviewsSpinner.stopAnimating()
+                }
+            }
         }
+    }
+
+    func setupRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
+        reviewsView.tableView.refreshControl = refreshControl
     }
 
 }
