@@ -5,7 +5,7 @@ struct ReviewCellConfig {
 
     /// Идентификатор для переиспользования ячейки.
     static let reuseId = String(describing: ReviewCellConfig.self)
-    
+
     /// Идентификатор конфигурации. Можно использовать для поиска конфигурации в массиве.
     let id = UUID()
     /// Имя пользователя.
@@ -69,9 +69,20 @@ final class ReviewCell: UITableViewCell {
     fileprivate let avatarImage = UIImageView(image: UIImage(named: "defaultAvatar"))
     fileprivate let userNameTextLabel = UILabel()
     fileprivate let ratingImage = UIImageView()
+    fileprivate let photosCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+
+        let colView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        colView.backgroundColor = .clear
+        colView.showsHorizontalScrollIndicator = false
+        return colView
+    }()
     fileprivate let reviewTextLabel = UILabel()
     fileprivate let createdLabel = UILabel()
     fileprivate let showMoreButton = UIButton()
+
+    var photos: [UIImage] = []
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -79,6 +90,7 @@ final class ReviewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        photos = photosEmulating()
         setupCell()
     }
 
@@ -88,12 +100,42 @@ final class ReviewCell: UITableViewCell {
         avatarImage.frame = layout.avatarImageFrame
         userNameTextLabel.frame = layout.userNameTextLabelFrame
         ratingImage.frame = layout.ratingImageFrame
+        photosCollectionView.frame = layout.photosFrame
         reviewTextLabel.frame = layout.reviewTextLabelFrame
         createdLabel.frame = layout.createdLabelFrame
         showMoreButton.frame = layout.showMoreButtonFrame
     }
 
+    /// Метод, эмулирующий различное кол-во фото для отзыва
+    func photosEmulating() -> [UIImage] {
+        let photosCount = Int.random(in: 0...5)
+        let imageName = ["1", "2", "3", "4", "5", "6"]
+        var images: [UIImage] = []
+
+        for _ in 0..<photosCount {
+            let imageName = imageName.randomElement() ?? "6"
+            let image = UIImage(named: imageName) ?? UIImage()
+            images.append(image)
+        }
+
+        return images
+    }
+
 }
+
+// MARK: - Delegates
+extension ReviewCell: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        photos.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReviewPhotosCell.reuseId, for: indexPath) as! ReviewPhotosCell
+        cell.imgView.image = photos[indexPath.item]
+        return cell
+    }
+}
+
 
 // MARK: - Private
 
@@ -163,6 +205,7 @@ private final class ReviewCellLayout {
     private(set) var avatarImageFrame = CGRect.zero
     private(set) var userNameTextLabelFrame = CGRect.zero
     private(set) var ratingImageFrame = CGRect.zero
+    private(set) var photosFrame = CGRect.zero
     private(set) var reviewTextLabelFrame = CGRect.zero
     private(set) var showMoreButtonFrame = CGRect.zero
     private(set) var createdLabelFrame = CGRect.zero
