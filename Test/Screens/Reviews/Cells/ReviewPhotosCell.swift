@@ -27,8 +27,6 @@ class ReviewPhotosCell: UICollectionViewCell {
             imgView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imgView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-
     }
 
 }
-

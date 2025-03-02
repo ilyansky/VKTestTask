@@ -30,7 +30,9 @@ extension TableCellConfig {
 // MARK: - Private
 
 private extension TableCellConfig {
+
     private static var reuseId: String {
         return String(describing: Self.self)
     }
+    
 }

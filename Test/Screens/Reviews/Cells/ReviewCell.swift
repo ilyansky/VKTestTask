@@ -125,6 +125,7 @@ final class ReviewCell: UITableViewCell {
 
 // MARK: - Delegates
 extension ReviewCell: UICollectionViewDataSource, UICollectionViewDelegate {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         photos.count
     }

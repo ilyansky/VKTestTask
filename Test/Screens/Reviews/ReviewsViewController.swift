@@ -31,10 +31,12 @@ final class ReviewsViewController: UIViewController {
 // MARK: - Action
 
 private extension ReviewsViewController {
+
     @objc func refresh(sender: UIRefreshControl) {
         viewModel.getReviews()
         sender.endRefreshing()
     }
+    
 }
 
 // MARK: - Private

@@ -61,9 +61,11 @@ final class ReviewsCountCell: UITableViewCell {
 // MARK: - Private
 
 private extension ReviewsCountCell {
+
     func setupCell() {
         contentView.addSubview(reviewsCountLabel)
     }
+    
 }
 
 // MARK: - Layout
